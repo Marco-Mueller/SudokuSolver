@@ -74,10 +74,7 @@ public class SudokuSolver {
                             solvedNumber = conjunction1.get(0);
                         }
                         possibilities[rows][coloumns] = listToIntArray(conjunction1);
-
-
                         intermediateSolve[rows][coloumns] = solvedNumber;
-
                     }
                 }
 
@@ -88,14 +85,21 @@ public class SudokuSolver {
                             list.add(possibilities[rows][i]);
                         }
                         int solvedNumber = 0;
-                        List<Integer> conjunction2 = SudokuUtilities.findUniqueNumbers(coloumn, list);
-                        if (conjunction2.size() == 1) {
-                            solvedNumber = conjunction2.get(0);
+                        List<Integer> conjunctionColoumn = SudokuUtilities.findUniqueNumbers(coloumn, list);
+                        if (conjunctionColoumn.size() == 1) {
+                            solvedNumber = conjunctionColoumn.get(0);
                             intermediateSolve[rows][coloumn] = solvedNumber;
                         }
                     }
                 }
             }
+
+//            for (int rows = 0; rows < sudoku.length; rows++) {
+//                for (int coloumns = 0; coloumns < sudoku[rows].length; coloumns++) {
+//                }
+//            }
+
+
             iterations++;
             System.out.println("solving iteration: " + iterations + " ...");
             intermediateSolve = (int[][]) SerializationUtils.clone(intermediateSolve);

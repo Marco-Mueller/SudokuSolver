@@ -13,8 +13,8 @@ public class SudokuMain {
 
     public SudokuMain() {
         SudokuLibrary sudokus = new SudokuLibrary();
-        sudokuField = sudokus.getSudoku4();
-        sudokuSolution = sudokus.getSudoku4Solution();
+        sudokuField = sudokus.getSudoku5Difficult();
+        sudokuSolution = sudokus.getSudoku5DifficultSolution();
     }
 
     public SudokuField getSudokuField() {
