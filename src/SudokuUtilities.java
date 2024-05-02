@@ -35,13 +35,32 @@ public class SudokuUtilities {
         //System.out.println(sudokuString);
     }
 
-    public static <T> List<T> unifyLists(List<T> list1, List<T> list2, List<T> list3) {
+    /**
+     * this method unifies the elements present in all three input lists
+     *
+     * @param list1
+     * @param list2
+     * @param list3
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> unifyLists3(List<T> list1, List<T> list2, List<T> list3) {
         HashSet<T> set1 = new HashSet<>(list1);
         HashSet<T> set2 = new HashSet<>(list2);
         HashSet<T> set3 = new HashSet<>(list3);
 
         set1.retainAll(set2);
         set1.retainAll(set3);
+
+        return new ArrayList<>(set1);
+    }
+
+    public static <T> List<T> unifyLists2(List<T> list1, List<T> list2) {
+        HashSet<T> set1 = new HashSet<>(list1);
+        HashSet<T> set2 = new HashSet<>(list2);
+
+
+        set1.retainAll(set2);
 
         return new ArrayList<>(set1);
     }

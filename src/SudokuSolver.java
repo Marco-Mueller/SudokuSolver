@@ -69,7 +69,7 @@ public class SudokuSolver {
 
 
                         int solvedNumber = 0;
-                        List<Integer> conjunction1 = SudokuUtilities.unifyLists(missingNumbersRows, missingNumbersColoumns, missingNumbersSquare);
+                        List<Integer> conjunction1 = SudokuUtilities.unifyLists3(missingNumbersRows, missingNumbersColoumns, missingNumbersSquare);
                         if (conjunction1.size() == 1) {
                             solvedNumber = conjunction1.get(0);
                         }
@@ -84,63 +84,10 @@ public class SudokuSolver {
             for (int rows = 0; rows < sudoku.length; rows++) {
                 for (int coloumns = 0; coloumns < sudoku[rows].length; coloumns++) {
 
-                    int[][] coloumnPossibilities;
-                    int[][] rowPossibilities;
-                    int[][] squarePossibilities;
-
-                    if (sudoku[rows][coloumns] == 0) {
-                        List<int[]> list = new ArrayList<>();
-                        rowPossibilities = extractNthRowPossibilities(rows);
-                        for (int i = 0; i < 9; i++) {
-                            list.add(rowPossibilities[i]);
-                        }
-
-                        List<Integer> conjunctionRow = SudokuUtilities.findUniqueNumbers(coloumns, list);
-                        if (conjunctionRow.size() == 1) {
-                            int solvedNumber = conjunctionRow.get(0);
-                            intermediateSolve[rows][coloumns] = solvedNumber;
-                            possibilities[rows][coloumns] = new int[]{solvedNumber};
-                        }
-
-                    }
-
-
-                    if (sudoku[rows][coloumns] == 0) {
-                        List<int[]> list = new ArrayList<>();
-                        coloumnPossibilities = extractNthColumnPossibilities(coloumns);
-                        for (int i = 0; i < 9; i++) {
-                            list.add(coloumnPossibilities[i]);
-                        }
-
-                        int solvedNumber = 0;
-                        List<Integer> conjunctionRow = SudokuUtilities.findUniqueNumbers(rows, list);
-                        if (conjunctionRow.size() == 1) {
-                            solvedNumber = conjunctionRow.get(0);
-                            intermediateSolve[rows][coloumns] = solvedNumber;
-                        }
-                    }
-
-//                    if (sudoku[rows][coloumns] == 0) {
-//                        List<int[]> list = new ArrayList<>();
-//                        squarePossibilities = extractSquarePossibilities(getCurrentSquare(rows + 1, coloumns + 1));
-//                        for (int i = 0; i < 9; i++) {
-//                            list.add(squarePossibilities[i]);
-//                        }
-//
-//                        int solvedNumber = 0;
-//                        int nthTile = coloumns % 3 + 3 * (rows % 3);
-//                        List<Integer> conjunctionRow = SudokuUtilities.findUniqueNumbers(nthTile, list);
-//                        if (conjunctionRow.size() == 1) {
-//                            solvedNumber = conjunctionRow.get(0);
-//                            intermediateSolve[rows][coloumns] = solvedNumber;
-//                        }
-//                    }
-
+                    solvingStrategy2(rows, coloumns, sudoku, intermediateSolve);
                     if (rows == 0 && coloumns == 1) {
                         int x = 0;
                     }
-
-
                 }
             }
 
@@ -154,6 +101,60 @@ public class SudokuSolver {
         }
         return new SudokuField(intermediateSolve);
     }
+
+
+    public void solvingStrategy2(int rows, int coloumns, int[][] sudoku, int intermediateSolve[][]) {
+        int[][] coloumnPossibilities;
+        int[][] rowPossibilities;
+        int[][] squarePossibilities;
+
+        if (sudoku[rows][coloumns] == 0) {
+            List<int[]> list = new ArrayList<>();
+            rowPossibilities = extractNthRowPossibilities(rows);
+            for (int i = 0; i < 9; i++) {
+                list.add(rowPossibilities[i]);
+            }
+
+            List<Integer> conjunctionRow = SudokuUtilities.findUniqueNumbers(coloumns, list);
+            if (conjunctionRow.size() == 1) {
+                int solvedNumber = conjunctionRow.get(0);
+                intermediateSolve[rows][coloumns] = solvedNumber;
+                possibilities[rows][coloumns] = new int[]{solvedNumber};
+            }
+
+
+            list = new ArrayList<>();
+            coloumnPossibilities = extractNthColumnPossibilities(coloumns);
+            for (int i = 0; i < 9; i++) {
+                list.add(coloumnPossibilities[i]);
+            }
+
+            int solvedNumber = 0;
+            List<Integer> conjunctionColoums = SudokuUtilities.findUniqueNumbers(rows, list);
+            if (conjunctionColoums.size() == 1) {
+                solvedNumber = conjunctionColoums.get(0);
+                intermediateSolve[rows][coloumns] = solvedNumber;
+            }
+
+
+            list = new ArrayList<>();
+            squarePossibilities = extractSquarePossibilities(getCurrentSquare(rows + 1, coloumns + 1));
+            for (int i = 0; i < 9; i++) {
+                list.add(squarePossibilities[i]);
+            }
+
+            solvedNumber = 0;
+            int nthTile = coloumns % 3 + 3 * (rows % 3);
+            List<Integer> conjunctionSquare = SudokuUtilities.findUniqueNumbers(nthTile, list);
+            if (conjunctionSquare.size() == 1) {
+                solvedNumber = conjunctionSquare.get(0);
+                intermediateSolve[rows][coloumns] = solvedNumber;
+            }
+
+
+        }
+    }
+
 
     public int[] listToIntArray(List<Integer> list) {
         return list.stream().mapToInt(Integer::intValue).toArray();
