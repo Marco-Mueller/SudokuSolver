@@ -18,6 +18,7 @@ public class SudokuSolver {
         this.sudokuField = sudokuField;
     }
 
+
     public void initPossibilities() {
         int[][] sudoku = sudokuField.getSudoku();
 
@@ -29,7 +30,6 @@ public class SudokuSolver {
             }
         }
     }
-
 
     public SudokuField getSudokuField() {
         return sudokuField;
@@ -78,26 +78,71 @@ public class SudokuSolver {
                     }
                 }
 
-                for (int coloumn = 0; coloumn < sudoku[rows].length; coloumn++) {
-                    if (sudoku[rows][coloumn] == 0) {
-                        List<int[]> list = new ArrayList<>();
-                        for (int i = 0; i < 9; i++) {
-                            list.add(possibilities[rows][i]);
-                        }
-                        int solvedNumber = 0;
-                        List<Integer> conjunctionColoumn = SudokuUtilities.findUniqueNumbers(coloumn, list);
-                        if (conjunctionColoumn.size() == 1) {
-                            solvedNumber = conjunctionColoumn.get(0);
-                            intermediateSolve[rows][coloumn] = solvedNumber;
-                        }
-                    }
-                }
+
             }
 
-//            for (int rows = 0; rows < sudoku.length; rows++) {
-//                for (int coloumns = 0; coloumns < sudoku[rows].length; coloumns++) {
-//                }
-//            }
+            for (int rows = 0; rows < sudoku.length; rows++) {
+                for (int coloumns = 0; coloumns < sudoku[rows].length; coloumns++) {
+
+                    int[][] coloumnPossibilities;
+                    int[][] rowPossibilities;
+                    int[][] squarePossibilities;
+
+                    if (sudoku[rows][coloumns] == 0) {
+                        List<int[]> list = new ArrayList<>();
+                        rowPossibilities = extractNthRowPossibilities(rows);
+                        for (int i = 0; i < 9; i++) {
+                            list.add(rowPossibilities[i]);
+                        }
+
+                        List<Integer> conjunctionRow = SudokuUtilities.findUniqueNumbers(coloumns, list);
+                        if (conjunctionRow.size() == 1) {
+                            int solvedNumber = conjunctionRow.get(0);
+                            intermediateSolve[rows][coloumns] = solvedNumber;
+                            possibilities[rows][coloumns] = new int[]{solvedNumber};
+                        }
+
+                    }
+
+
+                    if (sudoku[rows][coloumns] == 0) {
+                        List<int[]> list = new ArrayList<>();
+                        coloumnPossibilities = extractNthColumnPossibilities(coloumns);
+                        for (int i = 0; i < 9; i++) {
+                            list.add(coloumnPossibilities[i]);
+                        }
+
+                        int solvedNumber = 0;
+                        List<Integer> conjunctionRow = SudokuUtilities.findUniqueNumbers(rows, list);
+                        if (conjunctionRow.size() == 1) {
+                            solvedNumber = conjunctionRow.get(0);
+                            intermediateSolve[rows][coloumns] = solvedNumber;
+                        }
+                    }
+
+//                    if (sudoku[rows][coloumns] == 0) {
+//                        List<int[]> list = new ArrayList<>();
+//                        squarePossibilities = extractSquarePossibilities(getCurrentSquare(rows + 1, coloumns + 1));
+//                        for (int i = 0; i < 9; i++) {
+//                            list.add(squarePossibilities[i]);
+//                        }
+//
+//                        int solvedNumber = 0;
+//                        int nthTile = coloumns % 3 + 3 * (rows % 3);
+//                        List<Integer> conjunctionRow = SudokuUtilities.findUniqueNumbers(nthTile, list);
+//                        if (conjunctionRow.size() == 1) {
+//                            solvedNumber = conjunctionRow.get(0);
+//                            intermediateSolve[rows][coloumns] = solvedNumber;
+//                        }
+//                    }
+
+                    if (rows == 0 && coloumns == 1) {
+                        int x = 0;
+                    }
+
+
+                }
+            }
 
 
             iterations++;
@@ -114,9 +159,62 @@ public class SudokuSolver {
         return list.stream().mapToInt(Integer::intValue).toArray();
     }
 
-
     public int getCurrentSquare(int row, int coloumn) {
         return ((row - 1) / 3) * 3 + 1 + ((coloumn - 1) / 3);
     }
+
+    public int[][] extractNthColumnPossibilities(int n) {
+        int[][] columnPossibilities = new int[9][];
+        for (int i = 0; i < 9; i++) {
+            columnPossibilities[i] = possibilities[i][n];
+        }
+        return columnPossibilities;
+    }
+
+    public int[][] extractNthRowPossibilities(int n) {
+        return possibilities[n];
+    }
+
+    public int[][] extractSquarePossibilities(int n) {
+        int startRow, startCol;
+        if (n <= 3) {
+            startRow = 0;
+            startCol = (n - 1) * 3;
+        } else if (n <= 6) {
+            startRow = 3;
+            startCol = ((n - 3) - 1) * 3;
+        } else {
+            startRow = 6;
+            startCol = ((n - 6) - 1) * 3;
+        }
+
+        int[][][] square = new int[3][3][];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                square[i][j] = possibilities[startRow + i][startCol + j];
+            }
+        }
+
+
+        return flattenFirstTwoDimensions(square);
+    }
+
+    public int[][] flattenFirstTwoDimensions(int[][][] array) {
+        int firstDimensionSize = array.length;
+        int secondDimensionSize = array[0].length;
+        int thirdDimensionSize = array[0][0].length;
+
+        int[][] flattenedArray = new int[firstDimensionSize * secondDimensionSize][thirdDimensionSize];
+
+        int index = 0;
+        for (int i = 0; i < firstDimensionSize; i++) {
+            for (int j = 0; j < secondDimensionSize; j++) {
+                flattenedArray[index++] = array[i][j];
+            }
+        }
+
+        return flattenedArray;
+    }
+
 
 }

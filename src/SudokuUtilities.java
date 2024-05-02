@@ -46,6 +46,13 @@ public class SudokuUtilities {
         return new ArrayList<>(set1);
     }
 
+    /**
+     * returns unique numbers at the nth spot, numbers which are possible in n and no other spot
+     *
+     * @param n
+     * @param arrays
+     * @return
+     */
     public static List<Integer> findUniqueNumbers(int n, List<int[]> arrays) {
         List<Integer> uniqueNumbers = new ArrayList<>();
         int[] targetArray = arrays.get(n);

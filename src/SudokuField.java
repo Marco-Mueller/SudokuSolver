@@ -71,7 +71,6 @@ public class SudokuField {
         for (int i = 0; i < sudoku.length; i++) {
             column[i] = sudoku[i][n - 1];
         }
-
         return column;
     }
 
